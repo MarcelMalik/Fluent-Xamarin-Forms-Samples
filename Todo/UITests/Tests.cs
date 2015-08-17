@@ -11,8 +11,8 @@ namespace Todo.UITests
     [TestFixture (Platform.iOS)]
     public class Tests
     {
-        IApp app;
-        Platform platform;
+        private IApp app;
+        private readonly Platform platform;
 
         public Tests (Platform platform)
         {
@@ -22,17 +22,49 @@ namespace Todo.UITests
         [SetUp]
         public void BeforeEachTest ()
         {
-            app = AppInitializer.StartApp (platform);
+            this.app = AppInitializer.StartApp (platform);
         }
 
         [Test]
-        public void WelcomeTextIsDisplayed ()
+        public void AddItemWithoutName()
         {
-            AppResult[] results = app.WaitForElement (c => c.Marked ("Welcome to Xamarin Forms!"));
-            app.Screenshot ("Welcome screen.");
+            // Arrange
 
-            Assert.IsTrue (results.Any ());
+            // Act
+            app.Tap (c => c.Marked ("Add"));
+            app.Tap (c => c.Marked ("Save"));
+            var results = app.WaitForElement (c => c.Marked ("Validation Error"));
+            app.Screenshot ("Validation Error - Please enter a name");
+
+            // Assert
+            Assert.IsTrue(results.Any());
+        }
+
+        [Test]
+        public void AddItem()
+        {
+            // Arrange
+
+            // Act
+            app.Tap (c => c.Marked ("Add"));
+            app.EnterText (c => c.Class (GetClassName ("EntryEditText", "UITextField")), "Buy car");
+            app.Screenshot ("Add Todo - Buy car entered");
+            app.Tap (c => c.Marked ("Save"));
+            var results = app.WaitForElement (c => c.Marked ("Buy car"));
+            app.Screenshot ("Todo List - Buy car added");
+
+            // Assert
+            Assert.IsTrue(results.Any());
+        }
+    
+        private string GetClassName(string android, string iOS)
+        {
+            switch (this.platform) {
+                case Platform.Android:
+                    return android;
+            default:
+                    return iOS;
+            }
         }
     }
 }
-

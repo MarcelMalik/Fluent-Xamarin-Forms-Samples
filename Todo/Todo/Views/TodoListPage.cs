@@ -16,7 +16,7 @@ namespace Todo.Views
                 .Title("Todo List")
                 // Add directly a toolbar item and bind it
                 .AddToolbarItem (Create.ToolbarItem ()
-                    .Text ("+")
+                    .Text ("Add")
                     .BindCommand ("Add"))
                 // And define the content, like a list view
                 .Content (Create.ListView ()
